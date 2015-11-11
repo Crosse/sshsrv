@@ -14,6 +14,7 @@ const serviceName = "ssh"
 
 var (
 	sshPath string
+	whatif  bool
 	verbose bool
 )
 
@@ -47,6 +48,7 @@ func init() {
 	const usageVerbose = "enable verbose logging"
 	flag.BoolVar(&verbose, "v", false, usageVerbose)
 	flag.BoolVar(&verbose, "verbose", false, usageVerbose+" (shorthand)")
+	flag.BoolVar(&whatif, "whatif", false, "perform everything but the actual connection")
 }
 
 func main() {
@@ -64,6 +66,10 @@ func main() {
 	}
 
 	log.Printf("Target for %v is %v:%v", host, targetHost, targetPort)
+
+	if whatif {
+		return
+	}
 
 	//args := []string{sshPath}
 	args := []string{}

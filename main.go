@@ -16,10 +16,7 @@ const (
 	defaultPort = 22
 )
 
-var (
-	sshPath string
-	whatif  bool
-)
+var sshPath string
 
 // GetSSHEndpoint tries to determine how to connect to a particular host
 // via SSH.  GetSSHEndpoint first attempts to discover the endpoint via
@@ -75,7 +72,6 @@ func init() {
 	}
 
 	var verbose = flag.Bool("v", false, "enable verbose logging")
-	flag.BoolVar(&whatif, "whatif", false, "perform everything but the actual connection")
 	flag.Parse()
 
 	if *verbose {
@@ -97,11 +93,7 @@ func main() {
 
 	log.Verbosef("Target for %v is %v:%v", host, targetHost, targetPort)
 
-	if whatif {
-		return
-	}
 
-	//args := []string{sshPath}
 	args := []string{}
 	args = append(args, fmt.Sprintf("-p %d", targetPort))
 	args = append(args, targetHost)

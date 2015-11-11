@@ -83,12 +83,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//log.Printf("Waiting for command to finish...")
-	_ = cmd.Wait()
-	//log.Printf("Command finished with error: %v", err)
-
-	//err = syscall.Exec(sshPath, args, os.Environ())
-	//if err != nil {
-	//log.Fatal(err)
-	//}
+	cmd.Wait()
 }

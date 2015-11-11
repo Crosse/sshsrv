@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -70,22 +69,56 @@ func init() {
 	if err != nil {
 		log.Fatal("Could not find ssh!")
 	}
+}
 
-	var verbose = flag.Bool("v", false, "enable verbose logging")
-	flag.Parse()
-
-	if *verbose {
-		log.LogLevel = log.LogVerbose
-	}
+func usage() {
+	fmt.Println("wat")
 }
 
 func main() {
-	if flag.NArg() < 1 {
-		flag.Usage()
+	const (
+		sshBoolArgs  = "1246AaCfGgKkMNnqsTtVvXxYy"
+		sshParamArgs = "bcDEeFIiLlmOopQRSWw"
+	)
+
+	if len(os.Args) < 2 {
+		usage()
 		os.Exit(1)
 	}
-	host := flag.Args()[0]
-	sshArgs := flag.Args()[1:]
+
+	var sshArgs []string
+	var sshCommand []string
+	var i int
+	var host string
+
+	for i = 1; i < len(os.Args); i++ {
+		arg := os.Args[i]
+		if len(arg) > 1 && arg[0] == '-' {
+			if strings.Contains(sshBoolArgs, string(arg[1])) {
+				sshArgs = append(sshArgs, arg)
+				if arg[1] == 'v' {
+					log.LogLevel = log.LogVerbose
+				}
+			} else if strings.Contains(sshParamArgs, string(arg[1])) {
+				sshArgs = append(sshArgs, fmt.Sprintf("%v %v", arg, os.Args[i+1]))
+				i++
+			}
+		} else {
+			if strings.Contains(arg, "@") {
+				x := strings.Split(arg, "@")
+				sshArgs = append(sshArgs, fmt.Sprintf("-l %v", x[0]))
+				host = x[1]
+			} else {
+				host = arg
+			}
+			i++
+			break
+		}
+	}
+	if len(os.Args[i:]) > 0 {
+		sshCommand = os.Args[i:]
+	}
+
 	targetHost, targetPort, err := GetSSHEndpoint(host)
 	if err != nil {
 		log.Fatal(err)
@@ -93,11 +126,13 @@ func main() {
 
 	log.Verbosef("Target for %v is %v:%v", host, targetHost, targetPort)
 
-
 	args := []string{}
 	args = append(args, fmt.Sprintf("-p %d", targetPort))
-	args = append(args, targetHost)
 	args = append(args, sshArgs...)
+	args = append(args, targetHost)
+	args = append(args, sshCommand...)
+	log.Verbosef("command: %v %v", sshPath, strings.Join(args, " "))
+
 	cmd := exec.Command(sshPath, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

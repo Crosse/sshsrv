@@ -11,7 +11,10 @@ import (
 	log "bitbucket.org/crosse3/gosimplelogger"
 )
 
-const serviceName = "ssh"
+const (
+	serviceName = "ssh"
+	defaultPort = 22
+)
 
 var (
 	sshPath string
@@ -19,21 +22,40 @@ var (
 )
 
 func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
-	cname, addrs, err := net.LookupSRV(serviceName, "tcp", hostname)
+	cname, srvAddrs, err := net.LookupSRV(serviceName, "tcp", hostname)
 	if err != nil {
-		return
+		if _, ok := err.(*net.DNSError); ok {
+			// DNS-related error.
+			log.Verbosef("error: %v", err)
+			err = nil
+		} else {
+			// Non-DNS error.  Probably want to stop now.
+			log.Fatal(err)
+		}
+	} else {
+		log.Verbosef("Retrieved record for %v", cname)
 	}
-	log.Printf("Retrieved record for %v", cname)
-	log.Printf("Found %d records", len(addrs))
 
-	// "The returned records are sorted by priority and randomized
-	// by weight within a priority", so return details for the first
-	// one in the list.
+	if len(srvAddrs) > 0 {
+		log.Verbosef("Found %d SRV record(s)", len(srvAddrs))
 
-	// The target DNS names are fully-specified with the root ("."),
-	// so trim that off.
-	target = strings.TrimRight(addrs[0].Target, ".")
-	port = addrs[0].Port
+		for i, r := range srvAddrs {
+			log.Verbosef("Record %d:\t%d %d %d %s", i, r.Priority, r.Weight, r.Port, r.Target)
+		}
+
+		// "The returned records are sorted by priority and randomized
+		// by weight within a priority", so return details for the first
+		// one in the list.
+
+		// The target DNS names are fully-specified with the root ("."),
+		// so trim that off.
+		target = strings.TrimRight(srvAddrs[0].Target, ".")
+		port = srvAddrs[0].Port
+	} else {
+		log.Verbosef("No SRV record found for %v", hostname)
+		target = hostname
+		port = defaultPort
+	}
 
 	return
 }

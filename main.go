@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"os/exec"
 	"strings"
+
+	log "bitbucket.org/crosse3/gosimplelogger"
 )
 
 const serviceName = "ssh"
@@ -15,7 +16,6 @@ const serviceName = "ssh"
 var (
 	sshPath string
 	whatif  bool
-	verbose bool
 )
 
 func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
@@ -45,15 +45,16 @@ func init() {
 		log.Fatal("Could not find ssh!")
 	}
 
-	const usageVerbose = "enable verbose logging"
-	flag.BoolVar(&verbose, "v", false, usageVerbose)
-	flag.BoolVar(&verbose, "verbose", false, usageVerbose+" (shorthand)")
+	var verbose = flag.Bool("v", false, "enable verbose logging")
 	flag.BoolVar(&whatif, "whatif", false, "perform everything but the actual connection")
+	flag.Parse()
+
+	if *verbose {
+		log.LogLevel = log.LogVerbose
+	}
 }
 
 func main() {
-	flag.Parse()
-
 	if flag.NArg() < 1 {
 		flag.Usage()
 		os.Exit(1)
@@ -62,10 +63,10 @@ func main() {
 	sshArgs := flag.Args()[1:]
 	targetHost, targetPort, err := GetSSHEndpoint(host)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
-	log.Printf("Target for %v is %v:%v", host, targetHost, targetPort)
+	log.Verbosef("Target for %v is %v:%v", host, targetHost, targetPort)
 
 	if whatif {
 		return
@@ -76,14 +77,12 @@ func main() {
 	args = append(args, fmt.Sprintf("-p %d", targetPort))
 	args = append(args, targetHost)
 	args = append(args, sshArgs...)
-	if verbose {
-		args = append(args, "-v")
-	}
 	cmd := exec.Command(sshPath, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
+	log.Verbosef("Connecting to %v:%v", targetHost, targetPort)
 	err = cmd.Start()
 	if err != nil {
 		log.Fatal(err)

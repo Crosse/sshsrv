@@ -21,6 +21,12 @@ var (
 	whatif  bool
 )
 
+// GetSSHEndpoint tries to determine how to connect to a particular host
+// via SSH.  GetSSHEndpoint first attempts to discover the endpoint via
+// DNS SRV records of the form "_ssh._tcp.<hostname>".  If found,
+// GetSSHEndpoint will return the target host and port to connect to
+// instead of the "bare" DNS hostname.  If no SRV record is found, it
+// will simply return the hostname and default SSH port (22).
 func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
 	cname, srvAddrs, err := net.LookupSRV(serviceName, "tcp", hostname)
 	if err != nil {
@@ -57,6 +63,7 @@ func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
 		port = defaultPort
 	}
 
+	// TODO: Extend this to return the entire list in priority-order
 	return
 }
 

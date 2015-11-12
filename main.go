@@ -72,7 +72,7 @@ func init() {
 }
 
 func usage() {
-	fmt.Println("wat")
+	fmt.Println("Usage: check the ssh man page.")
 }
 
 func main() {

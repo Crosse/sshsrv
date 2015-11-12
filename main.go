@@ -34,12 +34,10 @@ func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
 			// Non-DNS error.  Probably want to stop now.
 			log.Fatal(err)
 		}
-	} else {
-		log.Verbosef("Retrieved record for %v", cname)
 	}
 
 	if len(srvAddrs) > 0 {
-		log.Verbosef("Found %d SRV record(s)", len(srvAddrs))
+		log.Verbosef("Found %d SRV record(s) for %v", len(srvAddrs), cname)
 
 		for i, r := range srvAddrs {
 			log.Verbosef("Record %d:\t%d %d %d %s", i, r.Priority, r.Weight, r.Port, r.Target)

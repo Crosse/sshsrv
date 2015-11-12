@@ -27,7 +27,9 @@ func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
 	cname, srvAddrs, err := net.LookupSRV(serviceName, "tcp", hostname)
 	if err != nil {
 		if _, ok := err.(*net.DNSError); ok {
-			// DNS-related error.
+			// DNS-related error. This is okay for now;
+			// we'll just fall back to trying the hostname
+			// as-is instead.
 			log.Verbosef("error: %v", err)
 			err = nil
 		} else {

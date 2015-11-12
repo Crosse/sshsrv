@@ -75,24 +75,27 @@ func usage() {
 	fmt.Println("Usage: check the ssh man page.")
 }
 
-func main() {
+// parseArgs parses the command line arguments to find and return:
+// a) arguments to the ssh(1) command;
+// b) "user@host";
+// c) the command to run on the remote server, if any.
+//
+// Doing it this way just seemed easier than using the "flags"
+// package and creating flag variables for each of the 44 options,
+// because honestly, we don't care about any of them.
+func parseArgs(args []string) (sshArgs []string, host string, sshCommand []string) {
 	const (
+		// Taken from the ssh(1) man page.  These two will need
+		// to be updated if/when other options are added to
+		// ssh(1).
 		sshBoolArgs  = "1246AaCfGgKkMNnqsTtVvXxYy"
 		sshParamArgs = "bcDEeFIiLlmOopQRSWw"
 	)
 
-	if len(os.Args) < 2 {
-		usage()
-		os.Exit(1)
-	}
+	var argPos int
 
-	var sshArgs []string
-	var sshCommand []string
-	var i int
-	var host string
-
-	for i = 1; i < len(os.Args); i++ {
-		arg := os.Args[i]
+	for argPos = 1; argPos < len(os.Args); argPos++ {
+		arg := os.Args[argPos]
 		if len(arg) > 1 && arg[0] == '-' {
 			if strings.Contains(sshBoolArgs, string(arg[1])) {
 				sshArgs = append(sshArgs, arg)
@@ -100,8 +103,8 @@ func main() {
 					log.LogLevel = log.LogVerbose
 				}
 			} else if strings.Contains(sshParamArgs, string(arg[1])) {
-				sshArgs = append(sshArgs, fmt.Sprintf("%v %v", arg, os.Args[i+1]))
-				i++
+				sshArgs = append(sshArgs, fmt.Sprintf("%v %v", arg, os.Args[argPos+1]))
+				argPos++
 			}
 		} else {
 			if strings.Contains(arg, "@") {
@@ -111,13 +114,23 @@ func main() {
 			} else {
 				host = arg
 			}
-			i++
+			argPos++
 			break
 		}
 	}
-	if len(os.Args[i:]) > 0 {
-		sshCommand = os.Args[i:]
+	if len(os.Args[argPos:]) > 0 {
+		sshCommand = os.Args[argPos:]
 	}
+	return
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		usage()
+		os.Exit(1)
+	}
+
+	sshPath, err := exec.LookPath("ssh")
 
 	targetHost, targetPort, err := GetSSHEndpoint(host)
 	if err != nil {

@@ -60,3 +60,6 @@ This should install `sshsrv` into `$GOPATH/bin`.
 Because that wouldn't allow me to practice my Go!  Also, using a wrapper
 allows the user to use whatever version of `ssh(1)` is installed on
 their system, instead of being an OpenSSH-only addition.
+
+## Questions, Comments, Suggestions?
+Submit a pull request!

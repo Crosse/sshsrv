@@ -30,12 +30,12 @@ the following:
 
 ```
 $ dig +short _ssh._tcp.myhost.mydomain.com SRV
-1 1 22029 jumphost.mydomain.com.
+1 1 22029 gateway.mydomain.com.
 ```
 
 Using `sshsrv`, when you want to connect to `myhost.mydomain.com` it
 will look up this SRV record, which will tell `sshsrv` to actually
-connect to `jumphost.mydomain.com` on port 22029 instead.  (If no SRV
+connect to `gateway.mydomain.com` on port 22029 instead.  (If no SRV
 record exists, `sshsrv` will simply pass the hostname directly to
 `ssh(1)`.)
 

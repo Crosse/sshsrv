@@ -47,14 +47,11 @@ does, so that it can be a drop-in replacement for the `ssh(1)` command.
 ## Installation
 
 I'm new to all this Go stuff, so let's say you can perform the following
-steps to install `sshsrv`:
+steps to get and install `sshsrv` into $GOPATH/bin:
 
 ```
 $ go get github.com/crosse/sshsrv
-$ go install github.com/crosse/sshsrv
 ```
-
-This should install `sshsrv` into `$GOPATH/bin`.
 
 ## Why not just submit a patch to OpenSSH?
 Because that wouldn't allow me to practice my Go!  Also, using a wrapper

@@ -55,3 +55,8 @@ $ go install github.com/crosse/sshsrv
 ```
 
 This should install `sshsrv` into `$GOPATH/bin`.
+
+## Why not just submit a patch to OpenSSH?
+Because that wouldn't allow me to practice my Go!  Also, using a wrapper
+allows the user to use whatever version of `ssh(1)` is installed on
+their system, instead of being an OpenSSH-only addition.

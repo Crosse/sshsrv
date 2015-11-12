@@ -15,8 +15,6 @@ const (
 	defaultPort = 22
 )
 
-var sshPath string
-
 // GetSSHEndpoint tries to determine how to connect to a particular host
 // via SSH.  GetSSHEndpoint first attempts to discover the endpoint via
 // DNS SRV records of the form "_ssh._tcp.<hostname>".  If found,
@@ -61,14 +59,6 @@ func GetSSHEndpoint(hostname string) (target string, port uint16, err error) {
 
 	// TODO: Extend this to return the entire list in priority-order
 	return
-}
-
-func init() {
-	var err error
-	sshPath, err = exec.LookPath("ssh")
-	if err != nil {
-		log.Fatal("Could not find ssh!")
-	}
 }
 
 func usage() {
@@ -131,6 +121,11 @@ func main() {
 	}
 
 	sshPath, err := exec.LookPath("ssh")
+	if err != nil {
+		log.Fatal("Could not find ssh!")
+	}
+
+	sshArgs, host, sshCommand := parseArgs(os.Args[1:])
 
 	targetHost, targetPort, err := GetSSHEndpoint(host)
 	if err != nil {

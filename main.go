@@ -147,10 +147,9 @@ func main() {
 	cmd.Stderr = os.Stderr
 
 	log.Verbosef("Connecting to %v:%v", targetHost, targetPort)
-	err = cmd.Start()
-	if err != nil {
-		log.Fatal(err)
+	if err = cmd.Run(); err != nil {
+		if err, ok := err.(*exec.ExitError); !ok {
+			log.Fatal(err)
+		}
 	}
-
-	cmd.Wait()
 }

@@ -50,7 +50,7 @@ I'm new to all this Go stuff, so let's say you can perform the following
 steps to get and install `sshsrv` into $GOPATH/bin:
 
 ```
-$ go get github.com/crosse/sshsrv
+$ go get github.com/Crosse/sshsrv
 ```
 
 ## Why not just submit a patch to OpenSSH?

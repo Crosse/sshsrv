@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
-	log "github.com/crosse/gosimplelogger"
+	log "github.com/Crosse/gosimplelogger"
 )
 
 const (

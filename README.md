@@ -42,21 +42,25 @@ record exists, `sshsrv` will simply pass the hostname directly to
 ## Usage
 
 `sshsrv` strives to accept the same options that the `ssh(1)` command
-does, so that it can be a drop-in replacement for the `ssh(1)` command.
+does, so that it can be a drop-in replacement for the `ssh(1)`
+command. If there is a valid flag that isn't supported, please open an
+issue or PR!
 
 ## Installation
 
-I'm new to all this Go stuff, so let's say you can perform the following
-steps to get and install `sshsrv` into $GOPATH/bin:
+You can download the latest pre-built releases [here][releases].
+
+Alternatively, you can install it with Go 1.17 or higher like so:
 
 ```
-$ go get github.com/Crosse/sshsrv
+$ go install github.com/Crosse/sshsrv@latest
 ```
 
 ## Why not just submit a patch to OpenSSH?
-Because that wouldn't allow me to practice my Go!  Also, using a wrapper
-allows the user to use whatever version of `ssh(1)` is installed on
-their system, instead of being an OpenSSH-only addition.
+Using a wrapper allows the user to use whatever version of `ssh(1)` is
+installed on their system, instead of being an OpenSSH-only addition.
 
 ## Questions, Comments, Suggestions?
 Submit a pull request!
+
+[releases]: https://github.com/Crosse/sshsrv/releases/latest

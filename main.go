@@ -99,7 +99,7 @@ func parseArgs(args []string) (sshArgs []string, host string, sshCommand []strin
 		} else {
 			if strings.Contains(arg, "@") {
 				x := strings.Split(arg, "@")
-				sshArgs = append(sshArgs, fmt.Sprintf("-l %v", x[0]))
+				sshArgs = append(sshArgs, "-l", x[0])
 				host = x[1]
 			} else {
 				host = arg

@@ -1,0 +1,23 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - name: "setup go"
+      uses: actions/setup-go@v5
+      with:
+        cache: true
+        go-version-file: 'go.mod'
+
+    - name: build
+      run: make release

@@ -1,6 +1,8 @@
 name: Releases
 
 on:
+  workflow_dispatch:
+
   push:
     tags:
     - '*'
